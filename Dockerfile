@@ -46,9 +46,9 @@ COPY --from=python-build-stage /usr/src/app/wheels  /wheels/
 RUN pip install --no-cache-dir --no-index --find-links=/wheels/ /wheels/* \
   && rm -rf /wheels/
 
-#COPY ./compose/django/entrypoint /entrypoint
-#RUN sed -i 's/\r$//g' /entrypoint
-#RUN chmod +x /entrypoint
+COPY ./entrypoint /entrypoint
+RUN sed -i 's/\r$//g' /entrypoint
+RUN chmod +x /entrypoint
 #
 #COPY --chown=django:django start start
 #RUN sed -i 's/\r$//g' start
@@ -64,5 +64,5 @@ USER django
 
 COPY . .
 #
-#ENTRYPOINT ["/entrypoint"]
+ENTRYPOINT ["/entrypoint"]
 #CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

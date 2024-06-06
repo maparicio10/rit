@@ -19,6 +19,7 @@ services:
     build:
       context: compose/postgres
       dockerfile: Dockerfile
+    image: rit-postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data/
       - postgres_data_backups:/backups

@@ -84,21 +84,25 @@ print(env("DB_USER"))
 print(env("DB_PASSWORD"))
 print(env("DB_HOST"))
 print(env("DB_PORT"))
+print(DEBUG)
 
-if not DEBUG:
-    DATABASES = {"default": env.db("DATABASE_URL")}
-    DATABASES["default"]["ATOMIC_REQUESTS"] = True
-else:
-    DATABASES = {
-        'default': {
-            "ENGINE": env("DB_ENGINE"),
-            "NAME": env("DB_DATABASE"),
-            "USER": env("DB_USER"),
-            "PASSWORD": env("DB_PASSWORD"),
-            "HOST": env("DB_HOST"),
-            "PORT": env("DB_PORT"),
-        }
-    }
+
+DATABASES = {"default": env.db("DATABASE_URL")}
+DATABASES["default"]["ATOMIC_REQUESTS"] = True
+# if not DEBUG:
+#     DATABASES = {"default": env.db("DATABASE_URL")}
+#     DATABASES["default"]["ATOMIC_REQUESTS"] = True
+# else:
+#     DATABASES = {
+#         'default': {
+#             "ENGINE": env("DB_ENGINE"),
+#             "NAME": env("DB_DATABASE"),
+#             "USER": env("DB_USER"),
+#             "PASSWORD": env("DB_PASSWORD"),
+#             "HOST": env("DB_HOST"),
+#             "PORT": env("DB_PORT"),
+#         }
+#     }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

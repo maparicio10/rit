@@ -46,7 +46,7 @@ COPY --from=python-build-stage /usr/src/app/wheels  /wheels/
 RUN pip install --no-cache-dir --no-index --find-links=/wheels/ /wheels/* \
   && rm -rf /wheels/
 
-COPY ./entrypoint /entrypoint
+COPY /compose/dev/django/entrypoint /entrypoint
 RUN sed -i 's/\r$//g' /entrypoint
 RUN chmod +x /entrypoint
 #
@@ -60,7 +60,7 @@ RUN chmod +x /entrypoint
 # make django owner of the WORKDIR directory as well.
 RUN chown -R django:django ${APP_HOME}
 
-USER django
+#USER django
 
 COPY . .
 #

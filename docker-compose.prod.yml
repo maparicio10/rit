@@ -2,33 +2,33 @@ services:
   django:
     build:
       context: .
-      dockerfile: Dockerfile-prod
+      dockerfile: compose/prod/django/Dockerfile
     image: rit-web
-    command: ./start
+    command: ./compose/prod/django/start
     volumes:
       - static_volume:/app/staticfiles
     expose:
       - 8000
     env_file:
-      - ./.env.prod
-      - compose/postgres/.env.prod.db
+      - compose/prod/django/.env.prod
+      - compose/prod/postgres/.env.prod.db
     depends_on:
       - postgres
 
   postgres:
     build:
-      context: compose/postgres
+      context: compose/prod/postgres
       dockerfile: Dockerfile
     image: rit-postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data/
       - postgres_data_backups:/backups
     env_file:
-      - compose/postgres/.env.prod.db
+      - compose/prod/postgres/.env.prod.db
 
   nginx:
     build:
-      context: compose/nginx
+      context: compose/prod/nginx
       dockerfile: Dockerfile
     image: rit-nginx
     ports:

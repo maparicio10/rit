@@ -27,7 +27,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
-print(env('DB_ENGINE'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
@@ -79,17 +78,27 @@ WSGI_APPLICATION = 'rit.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+print(env("DB_ENGINE"))
+print(env("DB_DATABASE"))
+print(env("DB_USER"))
+print(env("DB_PASSWORD"))
+print(env("DB_HOST"))
+print(env("DB_PORT"))
 
-DATABASES = {
-    'default': {
-        "ENGINE": env("DB_ENGINE"),
-        "NAME": env("DB_DATABASE"),
-        "USER": env("DB_USER"),
-        "PASSWORD": env("DB_PASSWORD"),
-        "HOST": env("DB_HOST"),
-        "PORT": env("DB_PORT"),
+if not DEBUG:
+    DATABASES = {"default": env.db("DATABASE_URL")}
+    DATABASES["default"]["ATOMIC_REQUESTS"] = True
+else:
+    DATABASES = {
+        'default': {
+            "ENGINE": env("DB_ENGINE"),
+            "NAME": env("DB_DATABASE"),
+            "USER": env("DB_USER"),
+            "PASSWORD": env("DB_PASSWORD"),
+            "HOST": env("DB_HOST"),
+            "PORT": env("DB_PORT"),
+        }
     }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -123,7 +132,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

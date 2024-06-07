@@ -41,9 +41,6 @@ class Officer(User):
         if self.identification_number is None:
             self.identification_number = uuid.uuid4().int % 10 ** 10
 
-        # if not self.pk or 'password' in kwargs:
-        #     self.set_password(self.password)
-
         super().save(*args, **kwargs)
 
 

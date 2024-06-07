@@ -19,8 +19,14 @@ env = environ.Env(
     DEBUG=(bool, False)
 )
 
+USE_DOCKER = env.bool("USE_DOCKER", default=False)
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+if not USE_DOCKER:
+    # Take environment variables from .env file
+    environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -88,22 +94,16 @@ WSGI_APPLICATION = 'rit.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-DATABASES = {"default": env.db("DATABASE_URL")}
-DATABASES["default"]["ATOMIC_REQUESTS"] = True
-# if not DEBUG:
-#     DATABASES = {"default": env.db("DATABASE_URL")}
-#     DATABASES["default"]["ATOMIC_REQUESTS"] = True
-# else:
-#     DATABASES = {
-#         'default': {
-#             "ENGINE": env("DB_ENGINE"),
-#             "NAME": env("DB_DATABASE"),
-#             "USER": env("DB_USER"),
-#             "PASSWORD": env("DB_PASSWORD"),
-#             "HOST": env("DB_HOST"),
-#             "PORT": env("DB_PORT"),
-#         }
-#     }
+if USE_DOCKER:
+    DATABASES = {"default": env.db("DATABASE_URL")}
+    DATABASES["default"]["ATOMIC_REQUESTS"] = True
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -126,7 +126,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-us'
 
 TIME_ZONE = 'UTC'
 

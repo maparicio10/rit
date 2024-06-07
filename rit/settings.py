@@ -80,6 +80,20 @@ WSGI_APPLICATION = 'rit.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 DATABASES = {"default": env.db("DATABASE_URL")}
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
+# if not DEBUG:
+#     DATABASES = {"default": env.db("DATABASE_URL")}
+#     DATABASES["default"]["ATOMIC_REQUESTS"] = True
+# else:
+#     DATABASES = {
+#         'default': {
+#             "ENGINE": env("DB_ENGINE"),
+#             "NAME": env("DB_DATABASE"),
+#             "USER": env("DB_USER"),
+#             "PASSWORD": env("DB_PASSWORD"),
+#             "HOST": env("DB_HOST"),
+#             "PORT": env("DB_PORT"),
+#         }
+#     }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

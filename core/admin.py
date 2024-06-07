@@ -1,5 +1,7 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 
+from core.forms import OfficerCreationForm, OfficerChangeForm
 from core.models import Person, Officer, Vehicle, Violation
 
 # Register your models here.
@@ -10,7 +12,7 @@ admin.site.site_header = "Infracciones de tránsito"
 # admin.site.register([Person, Officer, Vehicle, Violation])
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
-    list_display = ('display_fullname','email')
+    list_display = ('display_fullname', 'email')
 
     def display_fullname(self, obj):
         return obj.fullname
@@ -19,8 +21,23 @@ class PersonAdmin(admin.ModelAdmin):
 
 
 @admin.register(Officer)
-class OfficerAdmin(admin.ModelAdmin):
+class OfficerAdmin(UserAdmin):
+    add_form = OfficerCreationForm
+    form = OfficerChangeForm
+    model = Officer
     list_display = ('display_fullname', 'identification_number')
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': (
+                'username', 'password1', 'password2', 'first_name', 'last_name', 'email'),
+        }),
+    )
+    fieldsets = (
+        (None, {'fields': ('username', 'password', 'first_name', 'last_name', 'email')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups')}),
+    )
+    search_fields = ('username', 'first_name', 'last_name', 'email', 'identification_number')
 
     def display_fullname(self, obj):
         return obj.fullname

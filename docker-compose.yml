@@ -18,10 +18,7 @@ services:
         dockerfile: ./compose/dev/postgres/Dockerfile
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-#    environment:
-#      - POSTGRES_USER=TPHxdAHqjBHoZiOeRwEpGoVsnEPuWUgM
-#      - POSTGRES_PASSWORD=nsIBnEKhc9uqVLsRhWzVLov52JAaSIBFNxi7lXC6iBeHVGJWDRZUnklVnxSI6Dr2
-#      - POSTGRES_DB=rit_db
+
     env_file:
       - ./compose/dev/postgres/env.dev
 

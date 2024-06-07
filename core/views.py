@@ -3,7 +3,7 @@ from django.core.validators import EmailValidator
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -59,7 +59,7 @@ cargar_infraccion = AddViolationAPIView.as_view()
 
 
 class ViolationReportAPIView(APIView):
-    permission_classes = []
+    permission_classes = [AllowAny]
 
     @swagger_auto_schema(
         operation_description="Genera un informe de infracciones para una persona específica basado en su correo electrónico.",
@@ -69,6 +69,7 @@ class ViolationReportAPIView(APIView):
                 'email': openapi.Schema(type=openapi.TYPE_STRING, description='Correo electrónico de la persona.')
             }
         ),
+        security=[],
         responses={
             200: 'Informe de infracciones generado con éxito.',
             400: 'Correo electrónico no proporcionado o no válido.',

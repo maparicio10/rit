@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+from django.core.validators import EmailValidator
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -48,9 +50,16 @@ class ViolationReportAPIView(APIView):
     permission_classes = []
 
     def post(self, request):
-        email = request.data['email']
+        email = request.data.get('email')
         if not email:
             return Response({"error": "El correo electrónico es obligatorio."}, status=status.HTTP_400_BAD_REQUEST)
+
+        validator = EmailValidator()
+        try:
+            validator(email)
+        except ValidationError:
+            return Response({"error": "El correo electrónico proporcionado no es válido."},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         try:
             person = Person.objects.get(email=email)
@@ -62,5 +71,6 @@ class ViolationReportAPIView(APIView):
             return Response({"error": "Persona no encontrada."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": "Error inesperado: " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 generar_informe = ViolationReportAPIView.as_view()

@@ -1,6 +1,7 @@
 import uuid
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -70,3 +71,9 @@ class Violation(models.Model):
 
     def __str__(self):
         return f"Violation {self.id} - {self.timestamp}"
+
+    def clean(self):
+        if not Vehicle.objects.filter(id=self.vehicle_id).exists():
+            raise ValidationError({'vehicle': 'Vehicle does not exist'})
+        if not Officer.objects.filter(id=self.officer_id).exists():
+            raise ValidationError({'officer': 'Officer does not exist'})

@@ -1,3 +1,44 @@
-from django.shortcuts import render
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from core.models import Vehicle, Officer, Violation
+from core.serializers import ViolationSerializer
+
 
 # Create your views here.
+class AddViolationAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = ViolationSerializer(data=request.data)
+        if serializer.is_valid():
+            license_plate = serializer.validated_data['placa_patente']
+            timestamp = serializer.validated_data['timestamp']
+            comments = serializer.validated_data['comentarios']
+
+            try:
+                officer = Officer.objects.get(username=request.user.username)
+                vehicle = Vehicle.objects.get(license_plate=license_plate)
+
+                violation = Violation.objects.create(
+                    timestamp=timestamp,
+                    comments=comments,
+                    vehicle=vehicle,
+                    officer=officer
+                )
+                violation.save()
+                return Response({"message": "Infracción cargada exitosamente."}, status=status.HTTP_200_OK)
+            except Vehicle.DoesNotExist:
+                return Response({"error": "Vehículo no encontrado con la placa patente proporcionada."},
+                                status=status.HTTP_404_NOT_FOUND)
+            except Officer.DoesNotExist:
+                return Response({"error": "Oficial no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+            except Exception as e:
+                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+cargar_infraccion = AddViolationAPIView.as_view()

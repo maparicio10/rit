@@ -74,6 +74,6 @@ class Violation(models.Model):
 
     def clean(self):
         if not Vehicle.objects.filter(id=self.vehicle_id).exists():
-            raise ValidationError({'vehicle': 'Vehicle does not exist'})
+            raise ValidationError({'vehicle': 'El vehículo no existe'})
         if not Officer.objects.filter(id=self.officer_id).exists():
-            raise ValidationError({'officer': 'Officer does not exist'})
+            raise ValidationError({'officer': 'El oficial no existe.'})

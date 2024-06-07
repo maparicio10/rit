@@ -1,5 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -13,6 +15,16 @@ from core.serializers import ViolationSerializer, ViolationListSerializer
 class AddViolationAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="Registrar una infracción de tránsito.",
+        request_body=ViolationSerializer,
+        responses={
+            200: 'Infracción registrada exitosamente.',
+            400: 'Datos no válidos.',
+            401: 'El token dado no es válido.',
+            404: 'Oficial o Vehículo no encontrado.',
+            500: 'Error inesperado.'
+        })
     def post(self, request):
         serializer = ViolationSerializer(data=request.data)
         if serializer.is_valid():
@@ -49,6 +61,21 @@ cargar_infraccion = AddViolationAPIView.as_view()
 class ViolationReportAPIView(APIView):
     permission_classes = []
 
+    @swagger_auto_schema(
+        operation_description="Genera un informe de infracciones para una persona específica basado en su correo electrónico.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'email': openapi.Schema(type=openapi.TYPE_STRING, description='Correo electrónico de la persona.')
+            }
+        ),
+        responses={
+            200: 'Informe de infracciones generado con éxito.',
+            400: 'Correo electrónico no proporcionado o no válido.',
+            404: 'Persona no encontrada.',
+            500: 'Error inesperado.'
+        }
+    )
     def post(self, request):
         email = request.data.get('email')
         if not email:
@@ -63,6 +90,7 @@ class ViolationReportAPIView(APIView):
 
         try:
             person = Person.objects.get(email=email)
+            print(person)
             vehicles = person.vehicle_set.all()
             violations = Violation.objects.filter(vehicle__in=vehicles)
             serializer = ViolationListSerializer(violations, many=True)

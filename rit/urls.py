@@ -25,12 +25,10 @@ from core.views import cargar_infraccion, generar_informe
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Tu API",
+        title="RIT API",
         default_version='v1',
-        description="Descripción de tu API",
-        terms_of_service="https://www.yourcompany.com/terms/",
-        contact=openapi.Contact(email="contact@yourcompany.com"),
-        license=openapi.License(name="BSD License"),
+        description="API para el Registro de Infracciones de Tránsito",
+        contact=openapi.Contact(email="maparicio10@gmail.com"),
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),

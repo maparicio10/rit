@@ -15,6 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.shortcuts import redirect
 from django.urls import path, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
@@ -36,7 +37,13 @@ schema_view = get_schema_view(
     authentication_classes=(JWTAuthentication,),
 )
 
+
+def redirect_to_admin(request):
+    return redirect('/admin')
+
+
 urlpatterns = [
+    path('', redirect_to_admin),
     path('admin/', admin.site.urls),
 ]
 

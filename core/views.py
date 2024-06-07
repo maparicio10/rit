@@ -3,8 +3,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.models import Vehicle, Officer, Violation
-from core.serializers import ViolationSerializer
+from core.models import Vehicle, Officer, Violation, Person
+from core.serializers import ViolationSerializer, ViolationListSerializer
 
 
 # Create your views here.
@@ -42,3 +42,25 @@ class AddViolationAPIView(APIView):
 
 
 cargar_infraccion = AddViolationAPIView.as_view()
+
+
+class ViolationReportAPIView(APIView):
+    permission_classes = []
+
+    def post(self, request):
+        email = request.data['email']
+        if not email:
+            return Response({"error": "El correo electrónico es obligatorio."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            person = Person.objects.get(email=email)
+            vehicles = person.vehicle_set.all()
+            violations = Violation.objects.filter(vehicle__in=vehicles)
+            serializer = ViolationListSerializer(violations, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Person.DoesNotExist:
+            return Response({"error": "Persona no encontrada."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": "Error inesperado: " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+generar_informe = ViolationReportAPIView.as_view()

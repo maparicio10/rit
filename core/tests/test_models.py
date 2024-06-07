@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from .models import Person, Officer, Vehicle, Violation
+from core.models import Person, Officer, Vehicle, Violation
 import uuid
 from django.utils import timezone
 from django.core.exceptions import ValidationError

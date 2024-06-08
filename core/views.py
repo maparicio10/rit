@@ -67,7 +67,8 @@ class ViolationReportAPIView(APIView):
             type=openapi.TYPE_OBJECT,
             properties={
                 'email': openapi.Schema(type=openapi.TYPE_STRING, description='Correo electrónico de la persona.')
-            }
+            },
+            required=['email']
         ),
         security=[],
         responses={
@@ -91,9 +92,8 @@ class ViolationReportAPIView(APIView):
 
         try:
             person = Person.objects.get(email=email)
-            print(person)
             vehicles = person.vehicle_set.all()
-            violations = Violation.objects.filter(vehicle__in=vehicles)
+            violations = Violation.objects.filter(vehicle__in=vehicles).select_related('vehicle', 'officer')
             serializer = ViolationListSerializer(violations, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Person.DoesNotExist:

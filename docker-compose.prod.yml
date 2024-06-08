@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: compose/prod/django/Dockerfile
-    image: rit-web
+    image: maparicio/rit-web
     command: ./start
     volumes:
       - static_volume:/app/staticfiles
@@ -19,7 +19,7 @@ services:
     build:
       context: compose/prod/postgres
       dockerfile: Dockerfile
-    image: rit-postgres
+    image: maparicio/rit-postgress
     volumes:
       - postgres_data:/var/lib/postgresql/data/
       - postgres_data_backups:/backups
@@ -30,7 +30,7 @@ services:
     build:
       context: compose/prod/nginx
       dockerfile: Dockerfile
-    image: rit-nginx
+    image: maparicio/rit-nginx
     ports:
       - "80:80"
     volumes:

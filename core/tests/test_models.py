@@ -9,7 +9,9 @@ from django.core.exceptions import ValidationError
 # Create your tests here.
 class PersonModelTest(TestCase):
     def setUp(self):
-        self.person = Person.objects.create(first_name="John", last_name="Doe", email="john.doe@example.com")
+        self.person = Person.objects.create(
+            first_name="John", last_name="Doe", email="john.doe@example.com"
+        )
 
     def test_fullname(self):
         self.assertEqual(self.person.fullname, "John Doe")
@@ -20,9 +22,13 @@ class PersonModelTest(TestCase):
 
 class OfficerModelTest(TestCase):
     def setUp(self):
-        self.officer = Officer.objects.create_user(username="officer1", first_name="Jane", last_name="Doe",
-                                                   email="jane.doe@example.com")
-        self.officer.identification_number = uuid.uuid4().int % 10 ** 10
+        self.officer = Officer.objects.create_user(
+            username="officer1",
+            first_name="Jane",
+            last_name="Doe",
+            email="jane.doe@example.com",
+        )
+        self.officer.identification_number = uuid.uuid4().int % 10**10
         self.officer.save()
 
     def test_fullname(self):
@@ -37,8 +43,12 @@ class OfficerModelTest(TestCase):
 
 class VehicleModelTest(TestCase):
     def setUp(self):
-        self.person = Person.objects.create(first_name="John", last_name="Doe", email="john.doe@example.com")
-        self.vehicle = Vehicle.objects.create(license_plate="ABC123", brand="Toyota", color="Red", person=self.person)
+        self.person = Person.objects.create(
+            first_name="John", last_name="Doe", email="john.doe@example.com"
+        )
+        self.vehicle = Vehicle.objects.create(
+            license_plate="ABC123", brand="Toyota", color="Red", person=self.person
+        )
 
     def test_str(self):
         self.assertEqual(str(self.vehicle), "ABC123 - Toyota - Red")
@@ -49,14 +59,26 @@ class VehicleModelTest(TestCase):
 
 class ViolationModelTest(TestCase):
     def setUp(self):
-        self.person = Person.objects.create(first_name="John", last_name="Doe", email="john.doe@example.com")
-        self.officer = Officer.objects.create_user(username="officer1", first_name="Jane", last_name="Doe",
-                                                   email="jane.doe@example.com")
-        self.officer.identification_number = uuid.uuid4().int % 10 ** 10
+        self.person = Person.objects.create(
+            first_name="John", last_name="Doe", email="john.doe@example.com"
+        )
+        self.officer = Officer.objects.create_user(
+            username="officer1",
+            first_name="Jane",
+            last_name="Doe",
+            email="jane.doe@example.com",
+        )
+        self.officer.identification_number = uuid.uuid4().int % 10**10
         self.officer.save()
-        self.vehicle = Vehicle.objects.create(license_plate="ABC123", brand="Toyota", color="Red", person=self.person)
-        self.violation = Violation.objects.create(timestamp=timezone.now(), comments="Speeding", vehicle=self.vehicle,
-                                                  officer=self.officer)
+        self.vehicle = Vehicle.objects.create(
+            license_plate="ABC123", brand="Toyota", color="Red", person=self.person
+        )
+        self.violation = Violation.objects.create(
+            timestamp=timezone.now(),
+            comments="Speeding",
+            vehicle=self.vehicle,
+            officer=self.officer,
+        )
 
     def test_str(self):
         self.assertTrue(str(self.violation).startswith("Violation"))
@@ -68,20 +90,39 @@ class ViolationModelTest(TestCase):
 
 class ReferentialIntegrityTest(TestCase):
     def setUp(self):
-        self.person = Person.objects.create(first_name="John", last_name="Doe", email="john.doe@example.com")
-        self.officer = Officer.objects.create_user(username="officer1", first_name="Jane", last_name="Doe", email="jane.doe@example.com")
+        self.person = Person.objects.create(
+            first_name="John", last_name="Doe", email="john.doe@example.com"
+        )
+        self.officer = Officer.objects.create_user(
+            username="officer1",
+            first_name="Jane",
+            last_name="Doe",
+            email="jane.doe@example.com",
+        )
         self.officer.identification_number = uuid.uuid4().int % 10**10
         self.officer.save()
-        self.vehicle = Vehicle.objects.create(license_plate="ABC123", brand="Toyota", color="Red", person=self.person)
+        self.vehicle = Vehicle.objects.create(
+            license_plate="ABC123", brand="Toyota", color="Red", person=self.person
+        )
 
     def test_create_violation_with_nonexistent_vehicle(self):
         with self.assertRaises(ValidationError):
-            violation = Violation(timestamp=timezone.now(), comments="Speeding", vehicle_id=999, officer=self.officer)
+            violation = Violation(
+                timestamp=timezone.now(),
+                comments="Speeding",
+                vehicle_id=999,
+                officer=self.officer,
+            )
             violation.full_clean()
 
     def test_create_violation_with_nonexistent_officer(self):
         with self.assertRaises(ValidationError):
-            violation = Violation(timestamp=timezone.now(), comments="Speeding", vehicle=self.vehicle, officer_id=999)
+            violation = Violation(
+                timestamp=timezone.now(),
+                comments="Speeding",
+                vehicle=self.vehicle,
+                officer_id=999,
+            )
             violation.full_clean()
 
     def test_delete_person_cascades_to_vehicle(self):
@@ -90,13 +131,23 @@ class ReferentialIntegrityTest(TestCase):
             Vehicle.objects.get(id=self.vehicle.id)
 
     def test_delete_vehicle_cascades_to_violation(self):
-        violation = Violation.objects.create(timestamp=timezone.now(), comments="Speeding", vehicle=self.vehicle, officer=self.officer)
+        violation = Violation.objects.create(
+            timestamp=timezone.now(),
+            comments="Speeding",
+            vehicle=self.vehicle,
+            officer=self.officer,
+        )
         self.vehicle.delete()
         with self.assertRaises(Violation.DoesNotExist):
             Violation.objects.get(id=violation.id)
 
     def test_delete_officer_cascades_to_violation(self):
-        violation = Violation.objects.create(timestamp=timezone.now(), comments="Speeding", vehicle=self.vehicle, officer=self.officer)
+        violation = Violation.objects.create(
+            timestamp=timezone.now(),
+            comments="Speeding",
+            vehicle=self.vehicle,
+            officer=self.officer,
+        )
         self.officer.delete()
         with self.assertRaises(Violation.DoesNotExist):
             Violation.objects.get(id=violation.id)

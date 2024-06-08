@@ -12,7 +12,7 @@ class ViolationSerializer(serializers.Serializer):
 class VehicleDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vehicle
-        fields = ['license_plate', 'brand', 'color']
+        fields = ["license_plate", "brand", "color"]
 
 
 class ViolationListSerializer(serializers.ModelSerializer):
@@ -21,7 +21,7 @@ class ViolationListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Violation
-        fields = ['timestamp', 'comments', 'vehicle', 'officer_fullname']
+        fields = ["timestamp", "comments", "vehicle", "officer_fullname"]
         depth = 1
 
     def get_officer_fullname(self, obj):

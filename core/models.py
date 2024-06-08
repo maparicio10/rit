@@ -9,7 +9,9 @@ from django.db import models
 class Person(models.Model):
     first_name = models.CharField(max_length=50, verbose_name="Nombres")
     last_name = models.CharField(max_length=50, verbose_name="Apellidos")
-    email = models.EmailField(max_length=100, verbose_name="Correo electrónico", unique=True)
+    email = models.EmailField(
+        max_length=100, verbose_name="Correo electrónico", unique=True
+    )
 
     class Meta:
         verbose_name = "Persona"
@@ -24,8 +26,9 @@ class Person(models.Model):
 
 
 class Officer(User):
-    identification_number = models.BigIntegerField(unique=True, null=False, editable=False,
-                                                   verbose_name="Número de identificación")
+    identification_number = models.BigIntegerField(
+        unique=True, null=False, editable=False, verbose_name="Número de identificación"
+    )
 
     class Meta:
         verbose_name = "Oficial"
@@ -45,13 +48,15 @@ class Officer(User):
             raise ValidationError("El apellido es obligatorio.")
 
         if self.identification_number is None:
-            self.identification_number = uuid.uuid4().int % 10 ** 10
+            self.identification_number = uuid.uuid4().int % 10**10
 
         super().save(*args, **kwargs)
 
 
 class Vehicle(models.Model):
-    license_plate = models.CharField(max_length=25, unique=True, verbose_name="Placa de patente")
+    license_plate = models.CharField(
+        max_length=25, unique=True, verbose_name="Placa de patente"
+    )
     brand = models.CharField(max_length=50, verbose_name="Marca")
     color = models.CharField(max_length=25, verbose_name="Color")
     person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name="Dueño/a")
@@ -67,8 +72,12 @@ class Vehicle(models.Model):
 class Violation(models.Model):
     timestamp = models.DateTimeField(verbose_name="Fecha y hora")
     comments = models.TextField(verbose_name="Comentarios")
-    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, verbose_name="Vehículo")
-    officer = models.ForeignKey(Officer, on_delete=models.CASCADE, verbose_name="Oficial")
+    vehicle = models.ForeignKey(
+        Vehicle, on_delete=models.CASCADE, verbose_name="Vehículo"
+    )
+    officer = models.ForeignKey(
+        Officer, on_delete=models.CASCADE, verbose_name="Oficial"
+    )
 
     class Meta:
         verbose_name = "Infracción"
@@ -79,6 +88,6 @@ class Violation(models.Model):
 
     def clean(self):
         if not Vehicle.objects.filter(id=self.vehicle_id).exists():
-            raise ValidationError({'vehicle': 'El vehículo no existe'})
+            raise ValidationError({"vehicle": "El vehículo no existe"})
         if not Officer.objects.filter(id=self.officer_id).exists():
-            raise ValidationError({'officer': 'El oficial no existe.'})
+            raise ValidationError({"officer": "El oficial no existe."})

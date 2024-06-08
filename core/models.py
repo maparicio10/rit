@@ -9,7 +9,7 @@ from django.db import models
 class Person(models.Model):
     first_name = models.CharField(max_length=50, verbose_name="Nombres")
     last_name = models.CharField(max_length=50, verbose_name="Apellidos")
-    email = models.EmailField(max_length=100, verbose_name="Correo electrónico")
+    email = models.EmailField(max_length=100, verbose_name="Correo electrónico", unique=True)
 
     class Meta:
         verbose_name = "Persona"
@@ -39,6 +39,11 @@ class Officer(User):
         return f"{self.first_name} {self.last_name}"
 
     def save(self, *args, **kwargs):
+        if not self.first_name:
+            raise ValidationError("El nombre es obligatorio.")
+        if not self.last_name:
+            raise ValidationError("El apellido es obligatorio.")
+
         if self.identification_number is None:
             self.identification_number = uuid.uuid4().int % 10 ** 10
 

@@ -68,6 +68,13 @@ Este proyecto es un sistema de registro de infracciones de tránsito desarrollad
    ```
 
 6. **Ejecutar el Servidor**
+    Primero debe crear un  archivo .env:
+En la raíz de tu proyecto Django, crea un archivo llamado .env y agrega las siguientes variables de entorno:
+ ```sh
+DEBUG=1
+SECRET_KEY=django-insecure-y-p_6$%5@)(i!y-skjljx%#h&&ubt70*+@7#$)j2#ba-i-z@p)
+DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+```
 
    ```sh
    python manage.py runserver

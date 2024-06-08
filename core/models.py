@@ -39,6 +39,11 @@ class Officer(User):
         return f"{self.first_name} {self.last_name}"
 
     def save(self, *args, **kwargs):
+        if not self.first_name:
+            raise ValidationError("El nombre es obligatorio.")
+        if not self.last_name:
+            raise ValidationError("El apellido es obligatorio.")
+
         if self.identification_number is None:
             self.identification_number = uuid.uuid4().int % 10 ** 10
 
